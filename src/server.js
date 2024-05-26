@@ -28,31 +28,24 @@ export const setupServer = () => {
     });
   });
 
- app.get('/contacts/:contactId', async (req, res) => {
-        const contactId = req.params.contactId;
-        try {
-        const contact = await getContactById(contactId);
-        if (!contact) {
-            return res.status(404).json({
-                message: `There is no contact with id ${contactId}`,
-            });
-            };
-            res.status(200).json({
-            message: `Successfully found contact with id ${contactId}`,
-            data: contact,
+  app.get('/contacts/:contactId', async (req, res) => {
+    const contactId = req.params.contactId;
+    try {
+      const contact = await getContactById(contactId);
+      if (!contact) {
+        return res.status(404).json({
+          message: `There is no contact with id ${contactId}`,
         });
-        } catch(error) {
-             return res.status(404).json({
-                message: `There is no contact with id ${contactId}`,
-            });
-        }
-    });
-
-    const contacts = await getContactById();
-    res.status(200).json({
-      message: 'Successfully found contacts!',
-      data: contacts,
-    });
+      }
+      res.status(200).json({
+        message: `Successfully found contact with id ${contactId}`,
+        data: contact,
+      });
+    } catch (error) {
+      return res.status(404).json({
+        message: `There is no contact with id ${contactId}`,
+      });
+    }
   });
 
   app.use('*', (req, res) => {
