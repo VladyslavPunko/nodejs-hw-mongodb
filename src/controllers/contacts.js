@@ -3,6 +3,7 @@ import {
   deletContactById,
   getAllContacts,
   getContactById,
+  upsertContactById,
 } from '../services/contacts.js';
 import createHttpError from 'http-errors';
 
@@ -44,4 +45,17 @@ export const deleteContactByIdController = async (req, res) => {
   await deletContactById(contactId);
 
   res.status(204).send();
+};
+
+export const patchContactByIdController = async (req, res) => {
+  const { body } = req;
+  const { contactId } = req.params;
+
+  const contact = await upsertContactById(contactId, body);
+
+  res.status(200).json({
+    staus: 200,
+    message: `uccessfully patched a contact!`,
+    data: contact,
+  });
 };
