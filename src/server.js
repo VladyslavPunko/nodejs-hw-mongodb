@@ -2,7 +2,9 @@ import express from 'express';
 import pino from 'pino-http';
 import cors from 'cors';
 import { env } from './utilits/env.js';
-import studentsRouter from './routers/contacts.js';
+import contactsRouter from './routers/contacts.js';
+import { errorHandler } from './middleware/errorHandler.js';
+import { notFoundHandler } from './middleware/notFoundHandler.js';
 
 const PORT = Number(env('PORT', '3000'));
 
@@ -20,13 +22,10 @@ export const setupServer = () => {
     }),
   );
 
-  app.get(studentsRouter);
+  app.use(contactsRouter);
 
-  app.use('*', (req, res) => {
-    res.sendStatus(404).json({
-      message: 'Not found',
-    });
-  });
+  app.use('*', notFoundHandler);
+  app.use(errorHandler);
 
   app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
