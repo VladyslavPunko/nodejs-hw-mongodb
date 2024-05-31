@@ -52,11 +52,16 @@ export const deleteContactByIdController = async (req, res, next) => {
   res.status(204).send();
 };
 
-export const patchContactByIdController = async (req, res) => {
+export const patchContactByIdController = async (req, res, next) => {
   const { body } = req;
   const { contactId } = req.params;
 
   const contact = await upsertContactById(contactId, body);
+
+  if (!contact) {
+    next(createHttpError(404, 'Student not found'));
+    return;
+  }
 
   res.status(200).json({
     staus: 200,
