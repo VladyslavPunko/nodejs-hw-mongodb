@@ -40,9 +40,14 @@ export const createContactController = async (req, res) => {
   });
 };
 
-export const deleteContactByIdController = async (req, res) => {
+export const deleteContactByIdController = async (req, res, next) => {
   const { contactId } = req.params;
-  await deletContactById(contactId);
+  const contact = await deletContactById(contactId);
+
+  if (!contact) {
+    next(createHttpError(404, 'Student not found'));
+    return;
+  }
 
   res.status(204).send();
 };
