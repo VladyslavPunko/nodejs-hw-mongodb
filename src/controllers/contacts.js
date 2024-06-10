@@ -77,7 +77,7 @@ export const patchContactByIdController = async (req, res, next) => {
   const contact = await upsertContactById(contactId, body);
 
   if (!contact) {
-    next(createHttpError(404, 'Student not found'));
+    next(createHttpError(404, 'Cntact not found'));
     return;
   }
 
