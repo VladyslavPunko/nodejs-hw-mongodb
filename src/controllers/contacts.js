@@ -7,9 +7,27 @@ import {
 } from '../services/contacts.js';
 import createHttpError from 'http-errors';
 
+import { parsePaginationParams } from '../utilits/parsePaginationParams.js';
+
+import { parseSortParams } from '../utilits/parseSortParams.js';
+import { parseFilterParams } from '../utilits/parseFilterParams.js';
+import mongoose from 'mongoose';
+
 export const getContactsController = async (req, res) => {
-  const contacts = await getAllContacts();
+  const { page, perPage } = parsePaginationParams(req.query);
+  const { sortBy, sortOrder } = parseSortParams(req.query);
+
+  const filter = parseFilterParams(req.query);
+
+  const contacts = await getAllContacts({
+    page,
+    perPage,
+    sortBy,
+    sortOrder,
+    filter,
+  });
   res.status(200).json({
+    status: 200,
     message: 'Successfully found contacts!',
     data: contacts,
   });
@@ -17,6 +35,11 @@ export const getContactsController = async (req, res) => {
 
 export const getContactsByIdController = async (req, res, next) => {
   const { contactId } = req.params;
+
+  if (!mongoose.Types.ObjectId.isValid(contactId)) {
+    next(createHttpError(404, 'Contact not found'));
+    return;
+  }
 
   const contact = await getContactById(contactId);
 
@@ -60,7 +83,7 @@ export const patchContactByIdController = async (req, res, next) => {
   const contact = await upsertContactById(contactId, body);
 
   if (!contact) {
-    next(createHttpError(404, 'Student not found'));
+    next(createHttpError(404, 'Cntact not found'));
     return;
   }
 
