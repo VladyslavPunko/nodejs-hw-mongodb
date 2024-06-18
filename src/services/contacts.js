@@ -51,8 +51,16 @@ export const createContact = async (payload) => {
   return cotact;
 };
 
-export const deletContactById = async (contsctId, userId) => {
-  await ContactsCollection.findByIdAndDelete({ _id: contsctId, userId });
+export const deletContactById = async (contactId, userId) => {
+  const contact = await ContactsCollection.findOne({ _id: contactId, userId });
+
+  if (!contact) {
+    throw createHttpError(404, 'Contact not found');
+  }
+
+  await ContactsCollection.deleteOne({ _id: contactId });
+
+  return contact;
 };
 
 export const upsertContactById = async (contsctId, payload, userId) => {

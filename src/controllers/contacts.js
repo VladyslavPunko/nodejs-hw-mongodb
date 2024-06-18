@@ -66,15 +66,19 @@ export const createContactController = async (req, res) => {
 };
 
 export const deleteContactByIdController = async (req, res, next) => {
-  const { contactId } = req.params;
-  const contact = await deletContactById(contactId, req.user._id);
+  try {
+    const contactId = req.params.contactId;
+    const userId = req.user._id;
 
-  if (!contact) {
-    next(createHttpError(404, 'Student not found'));
-    return;
+    await deletContactById(contactId, userId);
+
+    res.status(204).json({
+      status: 204,
+      message: 'Contact deleted successfully',
+    });
+  } catch (error) {
+    next(error);
   }
-
-  res.status(204).send();
 };
 
 export const patchContactByIdController = async (req, res, next) => {
