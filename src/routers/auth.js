@@ -9,22 +9,22 @@ import {
 } from '../controllers/auth.js';
 import { validateBody } from '../middleware/validateBody.js';
 
-const router = Router();
+const authRouter = Router();
 
-router.post(
+authRouter.post(
   '/register',
   validateBody(registerUserSchema),
   ctrlWrapper(registerUserController),
 );
 
-router.post(
+authRouter.post(
   '/login',
   validateBody(loginUserSchema),
   ctrlWrapper(loginUserController),
 );
 
-router.post('/logout', ctrlWrapper(logoutUserController));
+authRouter.post('/logout', ctrlWrapper(logoutUserController));
 
-router.post('/refresh', ctrlWrapper(refreshUserController));
+authRouter.post('/refresh', ctrlWrapper(refreshUserController));
 
-export default router;
+export default authRouter;

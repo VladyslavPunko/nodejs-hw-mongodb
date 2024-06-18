@@ -4,7 +4,7 @@ import bcrypt from 'bcrypt';
 
 import { randomBytes } from 'crypto';
 
-import { FIFTEEN_MINUTES, ONE_DAY, THIRTY_DAYS } from '../constants/index.js';
+import { FIFTEEN_MINUTES, THIRTY_DAYS } from '../constants/index.js';
 import { SessionsCollection } from '../db/models/session.js';
 
 export const registerUser = async (payload) => {
@@ -49,8 +49,11 @@ export const loginUser = async (payload) => {
   });
 };
 
-export const logoutUser = async (sessionId) => {
-  await SessionsCollection.deleteOne({ _id: sessionId });
+export const logoutUser = async ({ sessionId, refreshToken }) => {
+  return await SessionsCollection.deleteOne({
+    _id: sessionId,
+    refreshToken: refreshToken,
+  });
 };
 
 const createSession = () => {
