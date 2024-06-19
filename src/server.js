@@ -2,9 +2,11 @@ import express from 'express';
 import pino from 'pino-http';
 import cors from 'cors';
 import { env } from './utilits/env.js';
-import contactsRouter from './routers/contacts.js';
+import router from './routers/index.js';
 import { errorHandler } from './middleware/errorHandler.js';
 import { notFoundHandler } from './middleware/notFoundHandler.js';
+
+import coockieParse from 'cookie-parser';
 
 const PORT = Number(env('PORT', '3000'));
 
@@ -14,6 +16,8 @@ export const setupServer = () => {
   app.use(express.json());
   app.use(cors());
 
+  app.use(coockieParse());
+
   app.use(
     pino({
       transport: {
@@ -22,7 +26,7 @@ export const setupServer = () => {
     }),
   );
 
-  app.use(contactsRouter);
+  app.use(router);
 
   app.use('*', notFoundHandler);
 
