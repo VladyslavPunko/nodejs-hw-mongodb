@@ -4,6 +4,8 @@ import { calculatePaginationData } from '../utilits/calculatePaginationData.js';
 
 import { SORT_ORDER } from '../constants/index.js';
 
+import { saveFileToCloudinary } from '../utilits/saveFileToCloudinary.js';
+
 export const getAllContacts = async ({
   page = 1,
   perPage = 10,
@@ -46,9 +48,17 @@ export const getContactById = async (contsctId, userId) => {
   return contact;
 };
 
-export const createContact = async (payload) => {
-  const cotact = await ContactsCollection.create(payload);
-  return cotact;
+export const createContact = async ({ photo, userId, ...payload }) => {
+  let url;
+  if (photo) {
+    url = await saveFileToCloudinary(photo);
+  }
+  const contact = await ContactsCollection.create({
+    ...payload,
+    userId: userId,
+    photo: url,
+  });
+  return contact;
 };
 
 export const deletContactById = async (contactId, userId) => {
@@ -63,18 +73,18 @@ export const deletContactById = async (contactId, userId) => {
   return contact;
 };
 
-export const upsertContactById = async (contsctId, payload, userId) => {
-  const contact = await ContactsCollection.findByIdAndUpdate(
-    { _id: contsctId, userId },
-    payload,
-    {
-      new: true,
-    },
-  );
-
-  if (!contact) {
-    throw createHttpError(404, 'Contact not found');
+export const upsertContactById = async (
+  contactId,
+  { photo, userId, ...payload },
+) => {
+  let url;
+  if (photo) {
+    url = await saveFileToCloudinary(photo);
   }
-
+  const contact = await ContactsCollection.findOneAndUpdate(
+    { _id: contactId, userId: userId },
+    { ...payload, photo: url },
+    { new: true },
+  );
   return contact;
 };
